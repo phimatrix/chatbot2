@@ -12,3 +12,18 @@ ollama run llama3.2:1b "hello, who are you?"
 pip install flask flask-cors requests
 then make port public or select public in side of codebar space
 
+pip install pyttsx3 SpeechRecognition pyaudio
+on local machine for voice 
+# Whisper — speech to text
+pip install openai-whisper
+
+# Piper — needs binary download
+wget https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz
+tar -xzf piper_linux_x86_64.tar.gz
+
+# Download a natural voice
+cd piper
+wget https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx
+wget https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json
+
+pip install openai-whisper sounddevice soundfile numpy
