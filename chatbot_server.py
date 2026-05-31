@@ -1,15 +1,15 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import google.generativeai as genai
+import requests
+import json
 
 app = Flask(__name__)
 CORS(app)
 
-genai.configure(api_key="YOUR_GEMINI_KEY_HERE")
+OLLAMA_URL = "http://127.0.0.1:11434/api/chat"
+MODEL = "llama3.2:1b"
 
-model = genai.GenerativeModel(
-    model_name="gemini-2.0-flash",
-    system_instruction="""You are a helpful assistant for Vanguard Plumbing & Air,
+SYSTEM_PROMPT = """You are a helpful assistant for Vanguard Plumbing & Air,
 a trusted plumber in Lakeland, FL. Here is everything you know:
 
 SERVICES: Repiping, Drain Cleaning, Clogged Drain Repair, Leak Detection,
@@ -31,7 +31,6 @@ Your job:
 - For emergencies, always give the phone number immediately
 - Be friendly, helpful, and professional
 - Keep replies short (2-3 sentences max)"""
-)
 
 @app.route("/")
 def home():
@@ -41,20 +40,21 @@ def home():
 def chat():
     data = request.json
     messages = data.get("messages", [])
+
+    ollama_messages = [{"role": "system", "content": SYSTEM_PROMPT}] + messages
+
     try:
-        history = []
-        for msg in messages[:-1]:
-            history.append({
-                "role": "user" if msg["role"] == "user" else "model",
-                "parts": [msg["content"]]
-            })
-        last_message = messages[-1]["content"]
-        chat_session = model.start_chat(history=history)
-        response = chat_session.send_message(last_message)
-        return jsonify({"reply": response.text})
+        response = requests.post(OLLAMA_URL, json={
+            "model": MODEL,
+            "messages": ollama_messages,
+            "stream": False
+        })
+        result = response.json()
+        reply = result["message"]["content"]
+        return jsonify({"reply": reply})
     except Exception as e:
         print(f"Error: {e}")
-        return jsonify({"reply": "Sorry, I'm having trouble right now. Please call 863-213-6583!"}), 200
+        return jsonify({"reply": "Sorry, having trouble right now. Please call 863-213-6583!"}), 200
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
