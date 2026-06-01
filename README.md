@@ -26,4 +26,4 @@ cd piper
 wget https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx
 wget https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json
 
-pip install openai-whisper sounddevice soundfile numpy
+pip install openai-whisper sounddevice soundfile numpy....
